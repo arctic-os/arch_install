@@ -68,7 +68,7 @@ pacman -S --noconfirm sed fzf
 
 echo "[arctic]
 SigLevel = Optional TrustAll
-Server = https://arctic-os.github.io/arctic_repo/$arch" >> /etc/pacman.conf
+Server = https://arctic-os.github.io/arctic_repo/\$arch" >> /etc/pacman.conf
 
 pacman -Syy
 
