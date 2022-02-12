@@ -90,12 +90,11 @@ echo "Set root password"
 passwd
 
 
-pacman --noconfirm --needed -S grub efibootmgr os-prober
+pacman -S --noconfirm --needed grub efibootmgr os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
-# Install Necessary Packages
-pacman --noconfirm --needed -S xorg-server xorg-xinit xorg-xwininfo xorg-xkill xorg-xsetroot xorg-xprop \
+pacman -S --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xkill xorg-xsetroot xorg-xprop \
     otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
     sxiv mpv ffmpeg imagemagick \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
