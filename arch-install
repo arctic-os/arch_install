@@ -3,6 +3,7 @@
 printf '\033c'
 echo "Welcome....."
 
+echo "Running reflector....."
 reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlsit --protocol https
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 10/" /etc/pacman.conf
 
@@ -13,6 +14,7 @@ loadkeys us
 
 while :
 do
+    lsblk
     read -p "Enter the drive: " drive
     cfdisk $drive
     read -p "Is partition completed? [y/n]: >" iscompleted
@@ -21,12 +23,13 @@ do
     fi
 done
 
-
+lsblk
 echo "Enter the Root Partition: "
 read rootpartition
 mkfs.ext4 $rootpartition
 mount $rootpartition /mnt
 
+lsblk
 echo "Enter the Efi Partition: "
 read efipartition
 mkfs.fat -F 32 $efipartition
@@ -35,6 +38,7 @@ mount $efipartition /mnt/boot/efi
 
 read -p "Did you also create a Swap Partition? [y/n]: >" answer
 if [[ $answer = y ]]; then
+    lsblk
     echo "Enter the Swap Partition: "
     read swappartition
     mkswap $swappartition
@@ -43,6 +47,7 @@ fi
 
 read -p "Did you create a separate Home Partition? [y/n]: >" homesep
 if [[ $homesep = y ]]; then
+    lsblk
     echo "Enter the Home Partition: "
     read homepartition
     mkfs.ext4 $homepartition
@@ -78,6 +83,7 @@ echo "127.0.0.1\tlocalhost
 ::1\t\tlocalhost
 127.0.1.1\t$hostname.localdomain\t$hostname" > /etc/hosts
 
+sed -i 's/COMPRESSION="xz"$/#COMPRESSION="xz"/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 echo "Set root password"
