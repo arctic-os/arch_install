@@ -36,7 +36,7 @@ mkfs.fat -F 32 $efipartition
 mkdir -p /mnt/boot/efi
 mount $efipartition /mnt/boot/efi
 
-read -p "Did you also create a Swap Partition? [y/n]: >" answer
+read -p "Did you also create a Swap Partition? [y/n]: " answer
 if [[ $answer = y ]]; then
     lsblk
     echo "Enter the Swap Partition: "
@@ -45,7 +45,7 @@ if [[ $answer = y ]]; then
     swapon $swappartition
 fi
 
-read -p "Did you create a separate Home Partition? [y/n]: >" homesep
+read -p "Did you create a separate Home Partition? [y/n]: " homesep
 if [[ $homesep = y ]]; then
     lsblk
     echo "Enter the Home Partition: "
