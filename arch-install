@@ -65,6 +65,13 @@ exit
 #part2
 printf '\033c'
 pacman -S --noconfirm sed fzf
+
+echo "[arctic]
+SigLevel = Optional TrustAll
+Server = https://arctic-os.github.io/arctic_repo/$arch" >> /etc/pacman.conf
+
+pacman -Syy
+
 region=$(ls /usr/share/zoneinfo | fzf --prompt="Select your Region: > ")
 city=$(ls /usr/share/zoneinfo/$region | fzf --prompt="Selce your City: > ")
 ln -sf /usr/share/zoneinfo/$region/$city /etc/localtime
@@ -102,7 +109,7 @@ pacman -S --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xkill x
     zsh zsh-syntax-highlighting dosfstools git pipewire pipewire-pulse jq \
     vim rsync bash-completion reflector firefox \
     dhcpcd networkmanager xdg-user-dirs \
-    bspwm sxhkd polybar sddm alacritty dunst libnotify
+    bspwm sxhkd polybar-wireless sddm alacritty dunst libnotify
 
 systemctl enable NetworkManager
 systemctl enable reflector.timer
