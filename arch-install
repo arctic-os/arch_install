@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+printf '\033c'
+echo "Welcome....."
+
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlsit --protocol https
+sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 10/" /etc/pacman.conf
+
+pacman --noconfirm -Syy archlinux-keyring
+
+timedatectl set-ntp true
+loadkeys us
+
+while :
+do
+    read -p "Enter the drive: " drive
+    cfdisk $drive
+    read -p "Is partition completed? [y/n]: >" iscompleted
+    if [[ $iscompleted = y ]]; then
+        break
+    fi
+done
+
+
+echo "Enter the Root Partition: "
+read rootpartition
+mkfs.ext4 $rootpartition
+mount $rootpartition /mnt
+
+echo "Enter the Efi Partition: "
+read efipartition
+mkfs.fat -F 32 $efipartition
+mkdir -p /mnt/boot/efi
+mount $efipartition /mnt/boot/efi
+
+read -p "Did you also create a Swap Partition? [y/n]: >" answer
+if [[ $answer = y ]]; then
+    echo "Enter the Swap Partition: "
+    read swappartition
+    mkswap $swappartition
+    swapon $swappartition
+fi
+
+read -p "Did you create a separate Home Partition? [y/n]: >" homesep
+if [[ $homesep = y ]]; then
+    echo "Enter the Home Partition: "
+    read homepartition
+    mkfs.ext4 $homepartition
+    mkdir /mnt/home
+    mount $homepartition /mnt/home
+fi
+
+pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
+genfstab -U /mnt >> /mnt/etc/fstab
+sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
+chmod +x /mnt/arch_install2.sh
+arch-chroot /mnt ./arch_install2.sh
+exit 
+
+#part2
+printf '\033c'
+pacman -S --noconfirm sed fzf
+region=$(ls /usr/share/zoneinfo | fzf --prompt="Select your Region: > ")
+city=$(ls /usr/share/zoneinfo/$region | fzf --prompt="Selce your City: > ")
+ln -sf /usr/share/zoneinfo/$region/$city /etc/localtime
+
+hwclock --systohc
+
+sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
+echo "Enter Hostname: "
+read hostname
+echo $hostname > /etc/hostname
+
+echo "127.0.0.1\tlocalhost
+::1\t\tlocalhost
+127.0.1.1\t$hostname.localdomain\t$hostname" > /etc/hosts
+
+mkinitcpio -p linux
+
+echo "Set root password"
+passwd
+
+
+# Configure grub
+pacman -noconfirm -S grub efibootmgr os-prober
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
+grub-mkconfig -o /boot/grub/grub.cfg
+
+# Install Necessary Packages
+pacman --noconfirm -S xorg-server xorg-xinit xorg-xwininfo xorg-xkill xorg-xsetroot xorg-xprop \
+    otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
+    sxiv mpv ffmpeg imagemagick \
+    fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
+    zip unzip unrar p7zip papirus-icon-theme \
+    zsh zsh-syntax-highlighting dosfstools git pipewire pipewire-pulse jq \
+    vim rsync bash-completion reflector firefox \
+    dhcpcd networkmanager xdg-user-dirs \
+    bspwm sxhkd polybar sddm alacritty dunst libnotify
+
+systemctl enable NetworkManager
+systemctl enable reflector.timer
+systemctl enable sddm
+
+sed -i "s/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
+
+echo "Adding User....."
+echo ""
+echo "Enter Username: "
+read username
+useradd -mG wheel -s /bin/zsh $username
+passwd $username
+
+
+#part3
+printf '\033c'
+pacman --noconfirm -S urxvt
+exit
