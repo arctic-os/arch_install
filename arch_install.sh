@@ -4,7 +4,7 @@ printf '\033c'
 echo "Welcome....."
 
 echo "Running reflector....."
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlsit --protocol https
+reflector --latest 20 --sort rate --protocol htpps --download-timeout 5 --save /etc/pacman.d/mirrorlsit
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 10/" /etc/pacman.conf
 
 pacman --noconfirm -Syy archlinux-keyring
@@ -12,51 +12,56 @@ pacman --noconfirm -Syy archlinux-keyring
 timedatectl set-ntp true
 loadkeys us
 
-while :
-do
-    lsblk
-    read -p "Enter the drive: " drive
-    cfdisk $drive
-    read -p "Is partition completed? [y/n]: " iscompleted
-    if [[ $iscompleted = y ]]; then
-        break
-    fi
-done
-
-lsblk
 echo ""
-echo "Enter the Root Partition: "
-read rootpartition
-mkfs.ext4 $rootpartition
-mount $rootpartition /mnt
+read -p "Already partitioned and mounted? [y/n]: " partcompleted
 
-lsblk
-echo ""
-echo "Enter the Efi Partition: "
-read efipartition
-mkfs.fat -F 32 $efipartition
-mkdir -p /mnt/boot/efi
-mount $efipartition /mnt/boot/efi
+if [[ $partcompleted = n ]]; then
+	while :
+	do
+		lsblk
+		read -p "Enter the drive: " drive
+		cfdisk $drive
+		read -p "Is partition completed? [y/n]: " iscompleted
+		if [[ $iscompleted = y ]]; then
+			break
+		fi
+	done
 
-read -p "Did you also create a Swap Partition? [y/n]: " answer
-if [[ $answer = y ]]; then
-    lsblk
-    echo ""
-    echo "Enter the Swap Partition: "
-    read swappartition
-    mkswap $swappartition
-    swapon $swappartition
-fi
+	lsblk
+	echo ""
+	echo "Enter the Root Partition: "
+	read rootpartition
+	mkfs.ext4 $rootpartition
+	mount $rootpartition /mnt
 
-read -p "Did you create a separate Home Partition? [y/n]: " homesep
-if [[ $homesep = y ]]; then
-    lsblk
-    echo ""
-    echo "Enter the Home Partition: "
-    read homepartition
-    mkfs.ext4 $homepartition
-    mkdir /mnt/home
-    mount $homepartition /mnt/home
+	lsblk
+	echo ""
+	echo "Enter the Efi Partition: "
+	read efipartition
+	mkfs.fat -F 32 $efipartition
+	mkdir -p /mnt/boot/efi
+	mount $efipartition /mnt/boot/efi
+
+	read -p "Did you also create a Swap Partition? [y/n]: " answer
+	if [[ $answer = y ]]; then
+		lsblk
+		echo ""
+		echo "Enter the Swap Partition: "
+		read swappartition
+		mkswap $swappartition
+		swapon $swappartition
+	fi
+
+	read -p "Did you create a separate Home Partition? [y/n]: " homesep
+	if [[ $homesep = y ]]; then
+		lsblk
+		echo ""
+		echo "Enter the Home Partition: "
+		read homepartition
+		mkfs.ext4 $homepartition
+		mkdir /mnt/home
+		mount $homepartition /mnt/home
+	fi
 fi
 
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
@@ -65,6 +70,7 @@ cp pacman.conf /mnt/
 sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
 chmod +x /mnt/arch_install2.sh
 arch-chroot /mnt ./arch_install2.sh
+rm /mnt/arch_install2.sh
 exit
 
 
@@ -72,6 +78,7 @@ exit
 printf '\033c'
 
 cat pacman.conf > /etc/pacman.conf
+rm pacman.conf
 
 pacman -Sy --noconfirm --needed sed fzf chaotic-mirrorlist chaotic-keyring
 
@@ -88,7 +95,7 @@ sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-echo
+echo ""
 echo "Enter Hostname: "
 read hostname
 echo $hostname > /etc/hostname
@@ -101,7 +108,7 @@ sed -i 's/COMPRESSION="xz"$/#COMPRESSION="xz"/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 echo ""
-echo "Set root password: "
+echo "Set root account password: "
 passwd
 
 
@@ -131,12 +138,14 @@ echo "Enter Username: "
 read username
 useradd -mG wheel -s /bin/zsh $username
 passwd $username
-echo "Pre-Installation Finish Reboot now"
+
+echo "Post-Installation script starting...."
 arch_install3_path=/home/$username/arch_install3.sh
 sed '1,/^#part3$/d' arch_install2.sh > $arch_install3_path
 chown $username:$username $arch_install3_path
 chmod +x $arch_install3_path
 su -c $arch_install3_path -s /bin/sh $username
+rm $arch_install3_path
 exit
 
 #part3
@@ -145,5 +154,4 @@ cd $HOME
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
 rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
 rm -r tmpdotfiles
-rm arch_install3.sh
 exit
