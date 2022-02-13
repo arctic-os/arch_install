@@ -95,7 +95,7 @@ echo "127.0.0.1\tlocalhost
 sed -i 's/COMPRESSION="xz"$/#COMPRESSION="xz"/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
-echo "\nSet root password"
+echo "\nSet root password: "
 passwd
 
 
@@ -137,5 +137,6 @@ exit
 printf '\033c'
 cd $HOME
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
-rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/.config
+rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
+rm -r tmpdotfiles
 exit
