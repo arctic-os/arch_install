@@ -59,9 +59,10 @@ pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
 genfstab -U /mnt >> /mnt/etc/fstab
 cp pacman.conf /mnt/
 sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
-chmod +x /mnt/arch_install2.sh
-arch-chroot /mnt ./arch_install2.sh
+chmod +x /mnt/arch-install2.sh
+arch-chroot /mnt ./arch-install2.sh
 exit
+
 
 #part2
 printf '\033c'
@@ -124,9 +125,17 @@ echo "Enter Username: "
 read username
 useradd -mG wheel -s /bin/zsh $username
 passwd $username
-
+echo "Pre-Installation Finish Reboot now"
+arch_install3_path=/home/$username/arch_install3.sh
+sed '1,/^#part3$/d' arch_install2.sh > $arch_install3_path
+chown $username:$username $arch_install3_path
+chmod +x $arch_install3_path
+su -c $arch_install3_path -s /bin/sh $username
 exit
 
 #part3
 printf '\033c'
+cd $HOME
+git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
+rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/.config
 exit
