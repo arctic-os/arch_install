@@ -65,11 +65,13 @@ exit
 
 #part2
 printf '\033c'
-pacman -S --noconfirm sed fzf
 
-cat pacman.conf >> /etc/pacman.conf
+cat pacman.conf > /etc/pacman.conf
 
-pacman -Syy
+pacman -Sy --noconfirm --needed sed fzf chaotic-mirrorlist chaotic-keyring
+
+sed -i 's/#\[chaotic-aur\]$/\[chaotic-aur\]/' /etc/pacman.conf
+sed -i 's/#Include = \/etc\/pacman.d\/chaotic-mirrorlist$/Include = \/etc\/pacman.d\/chaotic-mirrorlist/' /etc/pacman.conf
 
 region=$(ls /usr/share/zoneinfo | fzf --prompt="Select your Region: > ")
 city=$(ls /usr/share/zoneinfo/$region | fzf --prompt="Selce your City: > ")
@@ -81,7 +83,7 @@ sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-echo "Enter Hostname: "
+echo "\nEnter Hostname: "
 read hostname
 echo $hostname > /etc/hostname
 
@@ -92,15 +94,15 @@ echo "127.0.0.1\tlocalhost
 sed -i 's/COMPRESSION="xz"$/#COMPRESSION="xz"/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
-echo "Set root password"
+echo "\nSet root password"
 passwd
 
 
-pacman -S --noconfirm --needed grub efibootmgr os-prober
+pacman -Sy --noconfirm --needed grub efibootmgr os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
-pacman -S --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xrandr xorg-xkill xorg-xsetroot xorg-xprop \
+pacman -Sy --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xrandr xorg-xkill xorg-xsetroot xorg-xprop \
     otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
     sxiv mpv ffmpeg imagemagick \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
