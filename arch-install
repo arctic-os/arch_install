@@ -17,20 +17,20 @@ do
     lsblk
     read -p "Enter the drive: " drive
     cfdisk $drive
-    read -p "Is partition completed? [y/n]: >" iscompleted
+    read -p "Is partition completed? [y/n]: " iscompleted
     if [[ $iscompleted = y ]]; then
         break
     fi
 done
 
 lsblk
-echo "Enter the Root Partition: "
+echo "\nEnter the Root Partition: "
 read rootpartition
 mkfs.ext4 $rootpartition
 mount $rootpartition /mnt
 
 lsblk
-echo "Enter the Efi Partition: "
+echo "\nEnter the Efi Partition: "
 read efipartition
 mkfs.fat -F 32 $efipartition
 mkdir -p /mnt/boot/efi
@@ -39,7 +39,7 @@ mount $efipartition /mnt/boot/efi
 read -p "Did you also create a Swap Partition? [y/n]: " answer
 if [[ $answer = y ]]; then
     lsblk
-    echo "Enter the Swap Partition: "
+    echo "\nEnter the Swap Partition: "
     read swappartition
     mkswap $swappartition
     swapon $swappartition
@@ -48,7 +48,7 @@ fi
 read -p "Did you create a separate Home Partition? [y/n]: " homesep
 if [[ $homesep = y ]]; then
     lsblk
-    echo "Enter the Home Partition: "
+    echo "\nEnter the Home Partition: "
     read homepartition
     mkfs.ext4 $homepartition
     mkdir /mnt/home
@@ -57,18 +57,17 @@ fi
 
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
 genfstab -U /mnt >> /mnt/etc/fstab
+cp pacman.conf /mnt/
 sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
 chmod +x /mnt/arch_install2.sh
 arch-chroot /mnt ./arch_install2.sh
-exit 
+exit
 
 #part2
 printf '\033c'
 pacman -S --noconfirm sed fzf
 
-echo "[arctic]
-SigLevel = Optional TrustAll
-Server = https://arctic-os.github.io/arctic_repo/\$arch" >> /etc/pacman.conf
+cat pacman.conf >> /etc/pacman.conf
 
 pacman -Syy
 
@@ -101,7 +100,7 @@ pacman -S --noconfirm --needed grub efibootmgr os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
-pacman -S --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xkill xorg-xsetroot xorg-xprop \
+pacman -S --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xrandr xorg-xkill xorg-xsetroot xorg-xprop \
     otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
     sxiv mpv ffmpeg imagemagick \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
@@ -109,7 +108,7 @@ pacman -S --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xkill x
     zsh zsh-syntax-highlighting dosfstools git pipewire pipewire-pulse jq \
     vim rsync bash-completion reflector firefox \
     dhcpcd networkmanager xdg-user-dirs \
-    bspwm sxhkd polybar-wireless sddm alacritty dunst libnotify
+    bspwm sxhkd picom-ibhagwan-git polybar-wireless sddm alacritty dunst libnotify
 
 systemctl enable NetworkManager
 systemctl enable reflector.timer
@@ -124,8 +123,8 @@ read username
 useradd -mG wheel -s /bin/zsh $username
 passwd $username
 
+exit
 
 #part3
 printf '\033c'
-pacman --noconfirm -S urxvt-perls
 exit
