@@ -59,8 +59,8 @@ pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
 genfstab -U /mnt >> /mnt/etc/fstab
 cp pacman.conf /mnt/
 sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
-chmod +x /mnt/arch-install2.sh
-arch-chroot /mnt ./arch-install2.sh
+chmod +x /mnt/arch_install2.sh
+arch-chroot /mnt ./arch_install2.sh
 exit
 
 
