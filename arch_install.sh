@@ -24,13 +24,15 @@ do
 done
 
 lsblk
-echo "\nEnter the Root Partition: "
+echo ""
+echo "Enter the Root Partition: "
 read rootpartition
 mkfs.ext4 $rootpartition
 mount $rootpartition /mnt
 
 lsblk
-echo "\nEnter the Efi Partition: "
+echo ""
+echo "Enter the Efi Partition: "
 read efipartition
 mkfs.fat -F 32 $efipartition
 mkdir -p /mnt/boot/efi
@@ -39,7 +41,8 @@ mount $efipartition /mnt/boot/efi
 read -p "Did you also create a Swap Partition? [y/n]: " answer
 if [[ $answer = y ]]; then
     lsblk
-    echo "\nEnter the Swap Partition: "
+    echo ""
+    echo "Enter the Swap Partition: "
     read swappartition
     mkswap $swappartition
     swapon $swappartition
@@ -48,7 +51,8 @@ fi
 read -p "Did you create a separate Home Partition? [y/n]: " homesep
 if [[ $homesep = y ]]; then
     lsblk
-    echo "\nEnter the Home Partition: "
+    echo ""
+    echo "Enter the Home Partition: "
     read homepartition
     mkfs.ext4 $homepartition
     mkdir /mnt/home
@@ -84,7 +88,8 @@ sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-echo "\nEnter Hostname: "
+echo
+echo "Enter Hostname: "
 read hostname
 echo $hostname > /etc/hostname
 
@@ -95,7 +100,8 @@ echo "127.0.0.1\tlocalhost
 sed -i 's/COMPRESSION="xz"$/#COMPRESSION="xz"/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
-echo "\nSet root password: "
+echo ""
+echo "Set root password: "
 passwd
 
 
@@ -139,4 +145,5 @@ cd $HOME
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
 rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
 rm -r tmpdotfiles
+rm arch_install3.sh
 exit
