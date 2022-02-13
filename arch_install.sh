@@ -71,6 +71,9 @@ sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
 chmod +x /mnt/arch_install2.sh
 arch-chroot /mnt ./arch_install2.sh
 rm /mnt/arch_install2.sh
+echo ""
+echo "Installation Completed... Reboot Now."
+echo ""
 exit
 
 
@@ -132,8 +135,8 @@ systemctl enable sddm
 
 sed -i "s/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
-echo "Adding User....."
 echo ""
+echo "Adding User....."
 echo "Enter Username: "
 read username
 useradd -mG wheel -s /bin/zsh $username
