@@ -158,5 +158,6 @@ cd $HOME
 yay --noconfirm -S spaceship-prompt-git
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
 rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
+mkdir -p $HOME/.cache/zsh
 rm -r tmpdotfiles
 exit
