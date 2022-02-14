@@ -19,6 +19,7 @@ if [[ $partcompleted = n ]]; then
 	while :
 	do
 		lsblk
+		echo ""
 		read -p "Enter the drive: " drive
 		cfdisk $drive
 		read -p "Is partition completed? [y/n]: " iscompleted
@@ -63,6 +64,10 @@ if [[ $partcompleted = n ]]; then
 		mount $homepartition /mnt/home
 	fi
 fi
+
+echo ""
+lsblk
+echo ""
 
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -155,7 +160,6 @@ exit
 #part3
 printf '\033c'
 cd $HOME
-yay --noconfirm -S spaceship-prompt-git
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
 rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
 mkdir -p $HOME/.cache/zsh
