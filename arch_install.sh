@@ -119,14 +119,15 @@ pacman -Sy --noconfirm --needed grub efibootmgr os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
-pacman -Sy --noconfirm --needed xorg-server xorg-xinit xorg-xwininfo xorg-xrandr xorg-xkill xorg-xsetroot xorg-xprop \
+pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
+    xorg-xrandr xorg-xkill xorg-xsetroot xorg-xprop \
     otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
     sxiv mpv ffmpeg imagemagick \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
     zip unzip unrar p7zip papirus-icon-theme \
-    zsh zsh-syntax-highlighting dosfstools git pipewire pipewire-pulse jq \
-    vim rsync bash-completion reflector firefox \
-    dhcpcd networkmanager xdg-user-dirs \
+    zsh zsh-syntax-highlighting zsh-autosuggestions zsh-completions \
+    vim rsync bash-completion reflector firefox dosfstools git \
+    dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse jq \
     bspwm sxhkd picom-ibhagwan-git polybar-wireless sddm alacritty dunst libnotify
 
 systemctl enable NetworkManager
