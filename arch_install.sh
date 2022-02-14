@@ -130,8 +130,6 @@ pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
     dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse jq \
     bspwm sxhkd picom-ibhagwan-git polybar-wireless sddm alacritty dunst libnotify
 
-yay --noconfirm -S spaceship-prompt-git
-
 systemctl enable NetworkManager
 systemctl enable reflector.timer
 systemctl enable sddm
@@ -157,6 +155,7 @@ exit
 #part3
 printf '\033c'
 cd $HOME
+yay --noconfirm -S spaceship-prompt-git
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
 rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
 rm -r tmpdotfiles
