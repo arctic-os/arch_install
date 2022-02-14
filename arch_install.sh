@@ -124,11 +124,13 @@ pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
     otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
     sxiv mpv ffmpeg imagemagick \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
-    zip unzip unrar p7zip papirus-icon-theme \
+    zip unzip unrar p7zip yay papirus-icon-theme \
     zsh zsh-syntax-highlighting zsh-autosuggestions zsh-completions \
     vim rsync bash-completion reflector firefox dosfstools git \
     dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse jq \
     bspwm sxhkd picom-ibhagwan-git polybar-wireless sddm alacritty dunst libnotify
+
+yay --noconfirm -S spaceship-prompt-git
 
 systemctl enable NetworkManager
 systemctl enable reflector.timer
