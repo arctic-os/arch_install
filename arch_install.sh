@@ -76,6 +76,7 @@ sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
 chmod +x /mnt/arch_install2.sh
 arch-chroot /mnt ./arch_install2.sh
 rm /mnt/arch_install2.sh
+umount -R /mnt
 echo ""
 echo "Installation Completed... Reboot Now."
 echo ""
@@ -141,27 +142,15 @@ systemctl enable sddm
 
 sed -i "s/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
+git clone https://github.com/anilbeesetti/dotfiles.git /etc/skel/tmpdotfiles
+rsync -avxHAXP --exclude '.git*' /etc/skel/tmpdotfiles/ /etc/skel/
+rm -rf /etc/skel/tmpdotfiles
+
 echo ""
 echo "Adding User....."
 echo "Enter Username: "
 read username
-useradd -mG wheel -s /bin/zsh $username
+useradd -mG wheel,network,audio,video -s /bin/zsh $username
 passwd $username
 
-echo "Post-Installation script starting...."
-arch_install3_path=/home/$username/arch_install3.sh
-sed '1,/^#part3$/d' arch_install2.sh > $arch_install3_path
-chown $username:$username $arch_install3_path
-chmod +x $arch_install3_path
-su -c $arch_install3_path -s /bin/sh $username
-rm $arch_install3_path
-exit
-
-#part3
-printf '\033c'
-cd $HOME
-git clone --separate-git-dir=$HOME/.dotfiles https://github.com/anilbeesetti/bspwm_dotfiles.git tmpdotfiles
-rsync -avxHAXP --exclude '.git*' tmpdotfiles/ $HOME/
-mkdir -p $HOME/.cache/zsh
-rm -r tmpdotfiles
 exit
