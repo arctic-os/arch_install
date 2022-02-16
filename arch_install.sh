@@ -127,9 +127,9 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
     xorg-xrandr xorg-xkill xorg-xsetroot xorg-xprop \
     otf-cascadia-code ttf-iosevka-nerd noto-fonts ttf-jetbrains-mono ttf-font-awesome \
-    sxiv mpv ffmpeg imagemagick \
+    sxiv mpv ffmpeg imagemagick bibata-cursor-theme dracula-gtk-theme \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
-    zip unzip unrar p7zip yay papirus-icon-theme \
+    zip unzip unrar p7zip yay papirus-icon-theme spaceship-prompt-git \
     zsh zsh-syntax-highlighting zsh-autosuggestions zsh-completions \
     vim rsync bash-completion reflector firefox dosfstools git \
     dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse jq \
