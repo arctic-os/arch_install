@@ -3,6 +3,9 @@
 printf '\033c'
 echo "Welcome....."
 
+echo "Enter Username: "
+read username
+
 echo "Running reflector....."
 reflector --latest 20 --sort rate --protocol htpps --download-timeout 5 --save /etc/pacman.d/mirrorlsit
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 10/" /etc/pacman.conf
@@ -133,7 +136,7 @@ pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
     zip unzip unrar p7zip yay papirus-icon-theme spaceship-prompt-git \
     zsh zsh-syntax-highlighting zsh-autosuggestions zsh-completions \
     vim rsync bash-completion reflector firefox dosfstools git \
-    dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse jq \
+    dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse pamixer jq \
     bspwm sxhkd picom-ibhagwan-git polybar-wireless sddm alacritty dunst libnotify
 
 systemctl enable NetworkManager
@@ -148,8 +151,7 @@ rm -rf /etc/skel/tmpdotfiles
 
 echo ""
 echo "Adding User....."
-echo "Enter Username: "
-read username
+echo ""
 useradd -mG wheel,network,audio,video -s /bin/zsh $username
 passwd $username
 
