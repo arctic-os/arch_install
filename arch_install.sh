@@ -156,4 +156,15 @@ git clone https://github.com/anilbeesetti/dotfiles.git /home/$username/tmpdotfil
 rsync -avxHAXP --exclude '.git*' /etc/skel/tmpdotfiles/ /home/$username/
 rm -rf /home/$username/tmpdotfiles
 
+repoDir="/home/$username/.local/repos/"
+mkdir -p $repoDir
+
+cd $repoDir
+wget https://dl.suckless.org/tools/dmenu-5.1.tar.gz
+tar -xvf dmenu-5.1.tar.gz
+cd dmenu-5.1
+wget https://tools.suckless.org/dmenu/patches/line-height/dmenu-lineheight-5.0.diff
+patch -p1 < dmenu-lineheight-5.0.diff
+make install
+
 exit
