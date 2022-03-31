@@ -3,13 +3,6 @@
 printf '\033c'
 echo "Welcome....."
 
-echo "Enter Username: "
-read username
-
-echo ""
-echo "Enter Hostname: "
-read hostname
-
 echo "Running reflector....."
 reflector --latest 20 --sort rate --protocol htpps --download-timeout 5 --save /etc/pacman.d/mirrorlsit
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
@@ -112,6 +105,12 @@ sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
+echo "Enter Username: "
+read username
+
+echo ""
+echo "Enter Hostname: "
+read hostname
 
 echo $hostname > /etc/hostname
 
