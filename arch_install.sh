@@ -6,9 +6,13 @@ echo "Welcome....."
 echo "Enter Username: "
 read username
 
+echo ""
+echo "Enter Hostname: "
+read hostname
+
 echo "Running reflector....."
 reflector --latest 20 --sort rate --protocol htpps --download-timeout 5 --save /etc/pacman.d/mirrorlsit
-sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 10/" /etc/pacman.conf
+sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 
 pacman --noconfirm -Syy archlinux-keyring
 
@@ -99,6 +103,7 @@ sed -i 's/#Include = \/etc\/pacman.d\/chaotic-mirrorlist$/Include = \/etc\/pacma
 
 region=$(ls /usr/share/zoneinfo | fzf --prompt="Select your Region: > ")
 city=$(ls /usr/share/zoneinfo/$region | fzf --prompt="Selce your City: > ")
+echo ""
 ln -sf /usr/share/zoneinfo/$region/$city /etc/localtime
 
 hwclock --systohc
@@ -107,9 +112,7 @@ sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-echo ""
-echo "Enter Hostname: "
-read hostname
+
 echo $hostname > /etc/hostname
 
 echo "127.0.0.1\tlocalhost
@@ -137,11 +140,10 @@ pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
     zsh zsh-syntax-highlighting zsh-autosuggestions zsh-completions \
     vim rsync bash-completion reflector firefox dosfstools git \
     dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse pamixer jq \
-    bspwm sxhkd picom-ibhagwan-git polybar-wireless sddm alacritty dunst libnotify
+    bspwm sxhkd picom-ibhagwan-git polybar-wireless alacritty dunst libnotify
 
 systemctl enable NetworkManager
 systemctl enable reflector.timer
-systemctl enable sddm
 
 sed -i "s/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
