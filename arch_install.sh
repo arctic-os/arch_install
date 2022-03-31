@@ -153,7 +153,7 @@ useradd -mG wheel,network,audio,video -s /bin/zsh $username
 passwd $username
 
 git clone https://github.com/anilbeesetti/dotfiles.git /home/$username/tmpdotfiles
-rsync -avxHAXP --exclude '.git*' /etc/skel/tmpdotfiles/ /home/$username/
+rsync -avxHAXP --exclude '.git*' /home/$username/tmpdotfiles/ /home/$username/
 rm -rf /home/$username/tmpdotfiles
 
 repoDir="/home/$username/.local/repos/"
