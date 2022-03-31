@@ -69,7 +69,7 @@ echo ""
 lsblk
 echo ""
 
-pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode
+pacstrap --needed /mnt base base-devel linux linux-firmware linux-headers intel-ucode
 genfstab -U /mnt >> /mnt/etc/fstab
 cp pacman.conf /mnt/
 sed '1,/^#part2$/d' `basename $0` > /mnt/arch_install2.sh
@@ -146,14 +146,14 @@ systemctl enable reflector.timer
 
 sed -i "s/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
-git clone https://github.com/anilbeesetti/dotfiles.git /etc/skel/tmpdotfiles
-rsync -avxHAXP --exclude '.git*' /etc/skel/tmpdotfiles/ /etc/skel/
-rm -rf /etc/skel/tmpdotfiles
-
 echo ""
 echo "Adding User....."
 echo ""
 useradd -mG wheel,network,audio,video -s /bin/zsh $username
 passwd $username
+
+git clone https://github.com/anilbeesetti/dotfiles.git /home/$username/tmpdotfiles
+rsync -avxHAXP --exclude '.git*' /etc/skel/tmpdotfiles/ /home/$username/
+rm -rf /home/$username/tmpdotfiles
 
 exit
