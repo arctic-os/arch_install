@@ -137,7 +137,7 @@ pacman -Sy --noconfirm --needed xorg-server xorg-xrdb xorg-xinit xorg-xwininfo \
     fzf man-db xwallpaper youtube-dl python-pywal xclip maim \
     zip unzip unrar p7zip yay papirus-icon-theme spaceship-prompt-git \
     zsh zsh-syntax-highlighting zsh-autosuggestions zsh-completions \
-    vim rsync bash-completion reflector firefox dosfstools git \
+    vim rsync bash-completion reflector dmenyou firefox dosfstools git \
     dhcpcd networkmanager xdg-user-dirs pipewire pipewire-pulse pamixer jq \
     bspwm sxhkd picom-ibhagwan-git polybar-wireless alacritty dunst libnotify
 
@@ -155,16 +155,5 @@ passwd $username
 git clone https://github.com/anilbeesetti/dotfiles.git /home/$username/tmpdotfiles
 rsync -avxHAXP --exclude '.git*' /home/$username/tmpdotfiles/ /home/$username/
 rm -rf /home/$username/tmpdotfiles
-
-repoDir="/home/$username/.local/repos/"
-mkdir -p $repoDir
-
-cd $repoDir
-wget https://dl.suckless.org/tools/dmenu-5.1.tar.gz
-tar -xvf dmenu-5.1.tar.gz
-cd dmenu-5.1
-wget https://tools.suckless.org/dmenu/patches/line-height/dmenu-lineheight-5.0.diff
-patch -p1 < dmenu-lineheight-5.0.diff
-make install
 
 exit
